@@ -92,6 +92,7 @@ int main(int argc, char *argv[])
             fprintf(stderr, "ECHOSERV: Error calling accept()\n");
             exit(EXIT_FAILURE);
         }
+        fprintf(stdout, "ECHOSERV: server connected to client\n");
 
         /*  Retrieve an input line from the connected socket
             then simply write it back to the same socket.     */
@@ -105,4 +106,5 @@ int main(int argc, char *argv[])
             exit(EXIT_FAILURE);
         }
     }
+    exit(0);
 }
