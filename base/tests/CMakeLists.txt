@@ -3,3 +3,6 @@ target_link_libraries(date_test glacier_base)
 
 add_executable(timezone_test timezone_test.cc)
 target_link_libraries(timezone_test glacier_base)
+
+add_executable(timestamp_test timestamp_test.cc)
+target_link_libraries(timestamp_test glacier_base)
