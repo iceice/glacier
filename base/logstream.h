@@ -15,9 +15,9 @@ template <int SIZE>
 class FixedBuffer : private Uncopyable
 {
 public:
-    FixedBuffer() : cur_(data_) {}
+    FixedBuffer() : cur_(data_) { setCookie(cookieStart); }
 
-    ~FixedBuffer() {}
+    ~FixedBuffer() { setCookie(cookieEnd);  }
 
     void append(const char *buf, size_t len)
     {
@@ -41,6 +41,7 @@ public:
 
     // for used by GDB
     const char *debugString();
+    void setCookie(void (*cookie)()) { cookie_ = cookie; }
 
     // for used by unit test
     string toString() const { return string(data_, length()); }
@@ -48,6 +49,10 @@ public:
 
 private:
     const char *end() const { return data_ + sizeof data_; }
+    // Must be outline function for cookies.
+    static void cookieStart();
+    static void cookieEnd();
+    void (*cookie_)();
 
     char data_[SIZE];
     char *cur_;

@@ -64,6 +64,16 @@ const char *FixedBuffer<SIZE>::debugString()
     *cur_ = '\0';
     return data_;
 }
+
+template <int SIZE>
+void FixedBuffer<SIZE>::cookieStart()
+{
+}
+
+template <int SIZE>
+void FixedBuffer<SIZE>::cookieEnd()
+{
+}
 /*        FixedBuffer end         */
 
 /*        LogStream begin        */
