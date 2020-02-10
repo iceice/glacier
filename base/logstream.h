@@ -17,27 +17,28 @@ class FixedBuffer : private Uncopyable
 public:
     FixedBuffer() : cur_(data_) { setCookie(cookieStart); }
 
-    ~FixedBuffer() { setCookie(cookieEnd);  }
+    ~FixedBuffer() { setCookie(cookieEnd); }
 
     void append(const char *buf, size_t len)
     {
         if (implicit_cast<size_t>(avail()) > len)
         {
+            // 如果可用数据足够，就拷贝过去，同时移动当前指针。
             memcpy(cur_, buf, len);
             cur_ += len;
         }
     }
 
-    const char *data() const { return data_; }
-    int length() const { return static_cast<int>(cur_ - data_); }
+    const char *data() const { return data_; }                    // 返回数据，即首地址
+    int length() const { return static_cast<int>(cur_ - data_); } // 返回缓冲区已有数据长度
 
     // write to data_ directly
-    char *current() { return cur_; }
-    int avail() const { return static_cast<int>(end() - cur_); }
-    void add(size_t len) { cur_ += len; }
+    char *current() { return cur_; }                             // 返回当前数据末端地址
+    int avail() const { return static_cast<int>(end() - cur_); } // 返回剩余可用地址
+    void add(size_t len) { cur_ += len; }                        // cur前移
 
-    void reset() { cur_ = data_; }
-    void bzero() { memZero(data_, sizeof data_); }
+    void reset() { cur_ = data_; }                 // 重置，不清除数据，只需要让cur指回首地址即可
+    void bzero() { memZero(data_, sizeof data_); } // 数据清空
 
     // for used by GDB
     const char *debugString();
@@ -48,14 +49,14 @@ public:
     StringPiece toStringPiece() const { return StringPiece(data_, length()); }
 
 private:
-    const char *end() const { return data_ + sizeof data_; }
+    const char *end() const { return data_ + sizeof data_; } // 返回末尾指针
     // Must be outline function for cookies.
     static void cookieStart();
     static void cookieEnd();
     void (*cookie_)();
 
-    char data_[SIZE];
-    char *cur_;
+    char data_[SIZE]; // 缓冲区数组
+    char *cur_;       // 指向当前数据的末尾
 };
 
 class LogStream : private Uncopyable
