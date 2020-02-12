@@ -48,9 +48,9 @@ private:
 
     int epollfd_;
 
-    EventList events_;
+    EventList events_;    // 保存每一个fd关心的事件
 
-    ChannelMap channels_;
+    ChannelMap channels_; // fd ==> channel的映射
 };
 
 #endif // SRC_EPOLL_

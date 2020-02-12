@@ -96,7 +96,7 @@ private:
     const int fd_;    // channel负责的文件描述符
     int events_;      // 注册的事件
     int revents_;     // poller设置的就绪的事件
-    int index_;       // poller使用的下标
+    int index_;       // channel在epoll中的状态：kNew/kAdded/kDeleted
     bool logHup_;     // 是否生成某些日志
 
     // 防止handleEvent()运行期间其owner对象析构，导致Channel本身被销毁。

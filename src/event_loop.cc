@@ -50,10 +50,9 @@ EventLoop::EventLoop()
     {
         t_loopInThisThread = this;
     }
-    // 注册读完成时的回调函数
-    wakeupChannel_->setReadCallback(std::bind(&EventLoop::handleRead, this));
-    // 永远从wakeupfd中读
-    wakeupChannel_->enableReading();
+    wakeupChannel_->setReadCallback(
+        std::bind(&EventLoop::handleRead, this)); // 注册读完成时的回调函数
+    wakeupChannel_->enableReading();              // 永远从wakeupfd中读
 }
 
 EventLoop::~EventLoop()
@@ -82,7 +81,7 @@ void EventLoop::loop()
 
     while (!quit_)
     {
-        activeChannels_.clear(); // 情况事件列表
+        activeChannels_.clear(); // 清空事件列表
         // 通过poller获取就绪的channel，放到activeChannels_中
         pollReturnTime_ = poller_->poll(kPollTimeMs, &activeChannels_);
         ++iteration_;
@@ -90,7 +89,7 @@ void EventLoop::loop()
         {
             printActiveChannels(); // 将发生的事件写入日志
         }
-        // TODO sort channel by priority
+        
         eventHandling_ = true;
 
         // 处理就绪事件
