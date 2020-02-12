@@ -2,7 +2,7 @@
 
 #include "base/logging.h"
 #include "src/channel.h"
-#include "src/poller.h"
+#include "src/epoll.h"
 #include "src/timer_queue.h"
 
 #include <sys/eventfd.h>
@@ -33,7 +33,7 @@ EventLoop::EventLoop()
       callingPendingFunctors_(false),
       iteration_(0),
       threadId_(CurrentThread::tid()),
-      poller_(Poller::newDefaultPoller(this)),
+      poller_(new Epoll(this)),
       timerQueue_(new TimerQueue(this)),
       wakeupFd_(createEventfd()),
       wakeupChannel_(new Channel(this, wakeupFd_)),

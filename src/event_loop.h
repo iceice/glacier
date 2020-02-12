@@ -13,7 +13,7 @@
 #include <vector>
 
 class Channel;
-class Poller;
+class Epoll;
 class TimerQueue;
 
 //
@@ -100,7 +100,7 @@ private:
     const pid_t threadId_;        // 线程id
 
     Timestamp pollReturnTime_;               // poll有事件到来返回的时间
-    std::unique_ptr<Poller> poller_;         // poll函数的具体调用者
+    std::unique_ptr<Epoll> poller_;          // poll函数的具体调用者
     std::unique_ptr<TimerQueue> timerQueue_; // 定时器
 
     int wakeupFd_;                           // 唤醒fd
