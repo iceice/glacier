@@ -11,10 +11,10 @@ set(CXX_FLAGS
     -g           # Turn on debugging (so GDB gives more friendly output).
     -Wall        # Turn on most warnings.
     -Wextra      # Enable extra flags not enabled by -Wall
-    -Werror      # Make all warnings into errors.
+    # -Werror      # Make all warnings into errors.
     -Wconversion # Do warn about implicit conversions.
     -Wno-unused-parameter # Do not warn if a parameter is unused.
-    -Wold-style-cast      # Warn if an old-style (C-style) cast to a non-void type
+    # -Wold-style-cast      # Warn if an old-style (C-style) cast to a non-void type
     -Woverloaded-virtual  # Warn when a function declaration hides virtual functions from a base class
     -Wpointer-arith       # Warn about anything that depends on the “size of” a function type or of void.
     -Wshadow              # Warn whenever a local variable or type declaration shadows another variable
@@ -37,4 +37,3 @@ message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS} " " ${CMAKE_CXX_FLAGS_${BUILD_T
 
 add_subdirectory(base)
 add_subdirectory(src)
-add_subdirectory(tests)

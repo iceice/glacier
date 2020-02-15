@@ -33,5 +33,6 @@
 
 # myself
 .vscode
+.history
 build
 src-back
