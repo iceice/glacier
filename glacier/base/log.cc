@@ -18,6 +18,19 @@ const char* LogLevelName[Logger::NUM_LOG_LEVELS] = {
     "TRACE ", "DEBUG ", "INFO  ", "WARN  ", "ERROR ", "FATAL ",
 };
 
+inline LogStream& operator<<(LogStream& s, const Logger::SourceFile& v) {
+  s.append(v.data_, v.size_);
+  return s;
+}
+
+Logger::Impl::Impl(LogLevel level, int old_errno, const SourceFile& file,
+                   int line)
+    : stream_(), level_(level), basename_(file), line_(line), time_() {}
+
+void Logger::Impl::finish() {
+  stream_ << " - " << basename_ << ":" << level_ << "\n";
+}
+
 Logger::Logger(SourceFile file, int line) : impl_(INFO, 0, file, line) {}
 
 Logger::Logger(SourceFile file, int line, LogLevel level)
@@ -39,8 +52,6 @@ Logger::~Logger() {
 }
 
 void Logger::SetLogLevel(Logger::LogLevel level) { g_loglevel = level; }
-
-inline Logger::LogLevel Logger::logLevel() { return g_loglevel; }
 
 void Logger::SetOutput(OutputFunc out) { g_output = out; }
 

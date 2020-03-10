@@ -70,7 +70,7 @@ class Logger {
       size_ = static_cast<int>(strlen(data_));
     }
 
-   private:
+   public:
     const char* data_;
     int size_;
   };
@@ -114,6 +114,10 @@ class Logger {
 };
 
 extern Logger::LogLevel g_loglevel;  // 定义一个全局的日志级别
+
+inline Logger::LogLevel Logger::logLevel() {
+  return g_loglevel;
+}
 
 }  // namespace glacier
 

@@ -1,0 +1,8 @@
+add_executable(log_test log_test.cc)
+add_executable(timezone_test timezone_test.cc)
+add_executable(timestamp_test timestamp_test.cc)
+
+include_directories(${PROJECT_SOURCE_DIR})
+target_link_libraries(log_test glacier_base)
+target_link_libraries(timezone_test glacier_base)
+target_link_libraries(timestamp_test glacier_base)
