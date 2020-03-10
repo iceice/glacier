@@ -34,5 +34,6 @@
 # myself
 .vscode
 .history
+bin
 build
-src-back
+lib
