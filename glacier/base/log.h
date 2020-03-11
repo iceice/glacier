@@ -2,21 +2,28 @@
 #define GLACIER_BASE_LOG_
 
 #include "glacier/base/logstream.h"
+#include "glacier/base/timestamp.h"
+#include "glacier/base/timezone.h"
 
 #include <stdint.h>
 #include <cstring>
 #include <memory>
 
-
-#define LOG_TRACE if (glacier::Logger::logLevel() <= glacier::Logger::TRACE) \
+#define LOG_TRACE                                            \
+  if (glacier::Logger::logLevel() <= glacier::Logger::TRACE) \
   glacier::Logger(__FILE__, __LINE__, glacier::Logger::TRACE, __func__).stream()
-#define LOG_DEBUG if (glacier::Logger::logLevel() <= glacier::Logger::DEBUG) \
+#define LOG_DEBUG                                            \
+  if (glacier::Logger::logLevel() <= glacier::Logger::DEBUG) \
   glacier::Logger(__FILE__, __LINE__, glacier::Logger::DEBUG, __func__).stream()
-#define LOG_INFO  if (glacier::Logger::logLevel() <= glacier::Logger::INFO)  \
-  glacier::Logger(__FILE__, __LINE__, glacier::Logger::INFO, __func__).stream()
-#define LOG_WARN  glacier::Logger(__FILE__, __LINE__, glacier::Logger::WARN).stream();
-#define LOG_ERROR glacier::Logger(__FILE__, __LINE__, glacier::Logger::ERROR).stream();
-#define LOG_FATAL glacier::Logger(__FILE__, __LINE__, glacier::Logger::FATAL).stream();
+#define LOG_INFO                                            \
+  if (glacier::Logger::logLevel() <= glacier::Logger::INFO) \
+  glacier::Logger(__FILE__, __LINE__).stream()
+#define LOG_WARN \
+  glacier::Logger(__FILE__, __LINE__, glacier::Logger::WARN).stream()
+#define LOG_ERROR \
+  glacier::Logger(__FILE__, __LINE__, glacier::Logger::ERROR).stream()
+#define LOG_FATAL \
+  glacier::Logger(__FILE__, __LINE__, glacier::Logger::FATAL).stream()
 
 namespace glacier {
 
@@ -90,6 +97,7 @@ class Logger {
 
   static void SetOutput(OutputFunc);
   static void SetFlush(FlushFunc);
+  static void setTimeZone(const TimeZone& tz);
 
   LogStream& stream() { return impl_.stream_; }
 
@@ -101,13 +109,16 @@ class Logger {
   class Impl {
    public:
     Impl(LogLevel level, int old_errno, const SourceFile& file, int line);
+
     void finish();
+
+    void formatTime();
 
     LogStream stream_;
     LogLevel level_;
     SourceFile basename_;
     int line_;
-    uint64_t time_ = 0;
+    Timestamp time_;
   };
 
   Impl impl_;
@@ -115,9 +126,7 @@ class Logger {
 
 extern Logger::LogLevel g_loglevel;  // 定义一个全局的日志级别
 
-inline Logger::LogLevel Logger::logLevel() {
-  return g_loglevel;
-}
+inline Logger::LogLevel Logger::logLevel() { return g_loglevel; }
 
 }  // namespace glacier
 
