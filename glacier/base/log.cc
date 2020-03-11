@@ -131,9 +131,9 @@ Logger::~Logger() {
 
 void Logger::SetLogLevel(Logger::LogLevel level) { g_loglevel = level; }
 
-void Logger::SetOutput(OutputFunc out) { g_output = out; }
+void Logger::setOutput(OutputFunc out) { g_output = out; }
 
-void Logger::SetFlush(FlushFunc flush) { g_flush = flush; }
+void Logger::setFlush(FlushFunc flush) { g_flush = flush; }
 
 void Logger::setTimeZone(const TimeZone& tz) { g_logTimeZone = tz; }
 

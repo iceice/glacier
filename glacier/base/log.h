@@ -95,8 +95,8 @@ class Logger {
   static void SetLogLevel(LogLevel level);
   static LogLevel logLevel();
 
-  static void SetOutput(OutputFunc);
-  static void SetFlush(FlushFunc);
+  static void setOutput(OutputFunc);
+  static void setFlush(FlushFunc);
   static void setTimeZone(const TimeZone& tz);
 
   LogStream& stream() { return impl_.stream_; }
