@@ -46,23 +46,66 @@ void bench(const char* type) {
 }
 
 int main(int argc, char const* argv[]) {
-  // ThreadPool pool(4);
-  // pool.commit(logInThread);
-  // pool.commit(logInThread);
-  // pool.commit(logInThread);
-  // pool.commit(logInThread);
+  ThreadPool pool(4);
+  pool.commit(logInThread);
+  pool.commit(logInThread);
+  pool.commit(logInThread);
+  pool.commit(logInThread);
 
-  // LOG_TRACE << "trace";
-  // LOG_DEBUG << "debug";
-  // LOG_INFO << "Hello";
-  // LOG_WARN << "World";
-  // LOG_ERROR << "Error";
-  // LOG_INFO << sizeof(glacier::Logger);
-  // LOG_INFO << sizeof(glacier::LogStream);
-  // LOG_INFO << sizeof(glacier::LogStream::Buffer);
+  LOG_TRACE << "trace";
+  LOG_DEBUG << "debug";
+  LOG_INFO << "Hello";
+  LOG_WARN << "World";
+  LOG_ERROR << "Error";
+  LOG_INFO << sizeof(glacier::Logger);
+  LOG_INFO << sizeof(glacier::LogStream);
+  LOG_INFO << sizeof(glacier::LogStream::Buffer);
 
   sleep(1);
   bench("nop");
+
+  char buffer[64 * 1024];
+  g_file = fopen("/dev/null", "w");
+  setbuffer(g_file, buffer, sizeof buffer);
+  bench("/dev/null");
+  fclose(g_file);
+
+  g_file = fopen("/tmp/log", "w");
+  setbuffer(g_file, buffer, sizeof buffer);
+  bench("/tmp/log");
+  fclose(g_file);
+
+  g_file = NULL;
+  g_logFile.reset(new glacier::LogFile("test_log_st", 500 * 1000 * 1000));
+  bench("test_log_st");
+
+  g_logFile.reset(new glacier::LogFile("test_log_mt", 500 * 1000 * 1000));
+  bench("test_log_mt");
+  g_logFile.reset();
+
+  {
+    g_file = stdout;
+    sleep(1);
+    TimeZone beijing(8 * 3600, "CST");
+    Logger::setTimeZone(beijing);
+    LOG_TRACE << "trace CST";
+    LOG_DEBUG << "debug CST";
+    LOG_INFO << "Hello CST";
+    LOG_WARN << "World CST";
+    LOG_ERROR << "Error CST";
+
+    sleep(1);
+    TimeZone newyork("/usr/share/zoneinfo/America/New_York");
+    Logger::setTimeZone(newyork);
+    LOG_TRACE << "trace NYT";
+    LOG_DEBUG << "debug NYT";
+    LOG_INFO << "Hello NYT";
+    LOG_WARN << "World NYT";
+    LOG_ERROR << "Error NYT";
+    g_file = NULL;
+  }
+
+  bench("timezone nop");
 
   return 0;
 }
