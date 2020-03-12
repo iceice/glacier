@@ -1,7 +1,7 @@
 #ifndef GLACIER_TCPSERVER_
 #define GLACIER_TCPSERVER_
 
-#include "glacier/eventloop.h"
+#include "glacier/eventloop_threadpool.h"
 
 /*
  * TcpServer 服务器
@@ -30,8 +30,8 @@ class TcpServer {
   const char* port_;  // 监听的端口号
   int listenfd_;      // 返回的文件描述符
 
-  // EventLoopThreadPool::ptr eventLoopThreadPool_;  // 线程池
-  Channel::ptr acceptChannel_;  // 对应mainloop
+  EventLoopThreadPool::ptr eventLoopThreadPool_;  // 线程池
+  Channel::ptr acceptChannel_;                    // 对应mainloop
 
   bool started_;
 };
