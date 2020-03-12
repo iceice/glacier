@@ -38,3 +38,4 @@ message(STATUS "CXX_FLAGS= " ${CMAKE_CXX_FLAGS} " " ${CMAKE_CXX_FLAGS_${BUILD_TY
 
 add_subdirectory(glacier/base)
 add_subdirectory(tests)
+add_subdirectory(glacier)

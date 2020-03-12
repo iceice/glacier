@@ -1,6 +1,7 @@
 #include "glacier/base/asynclogging.h"
 #include "glacier/base/log.h"
 #include "glacier/base/timestamp.h"
+#include "glacier/base/threadpool.h"
 
 #include <stdio.h>
 #include <sys/resource.h>
@@ -51,11 +52,17 @@ int main(int argc, char const* argv[]) {
   AsyncLogging log(::basename(name), kRollSize, 3);
   log.start();
   g_asyncLog = &log;
-
   Logger::setOutput(asyncOutput);
 
-  bool longLog = argc > 1;
-  bench(longLog);
+  std::thread t1(std::bind(bench, false));
+  std::thread t2(std::bind(bench, true));
+  std::thread t3(std::bind(bench, false));
+  std::thread t4(std::bind(bench, true));
+
+  t1.join();
+  t2.join();
+  t3.join();
+  t4.join();
 
   return 0;
 }
