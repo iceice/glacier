@@ -6,7 +6,7 @@ SOURCE_DIR=$(pwd)
 BUILD_DIR=${BUILD_DIR:-./build}
 
 if [ ! "$1" ]; then
-    BUILD_TYPE=debug
+    BUILD_TYPE=release
 else
     BUILD_TYPE=$1
 fi

@@ -28,18 +28,15 @@ void TcpServer::start() {
 }
 
 void TcpServer::handleNewConn() {
-  int connfd;          /*  connecting socket   */
-  char hostname[8192]; /*  host name           */
-  char port[8192];     /*  port number         */
+  int connfd = 0;
+  struct sockaddr_in client_addr;
+  socklen_t client_addr_len = sizeof(client_addr);
+  memset(&client_addr, 0, sizeof(struct sockaddr_in));
+  while ((connfd = accept(listenfd_, reinterpret_cast<SA*>(&client_addr),
+                          &client_addr_len)) > 0) {
+    LOG_INFO << "New connection from " << inet_ntoa(client_addr.sin_addr) << ":"
+             << ntohs(client_addr.sin_port);
 
-  struct sockaddr_storage clientaddr;
-  socklen_t clientlen = sizeof(clientaddr);
-
-  while ((connfd = accept(listenfd_, reinterpret_cast<SA*>(&clientaddr),
-                          &clientlen)) > 0) {
-    getnameinfo(reinterpret_cast<SA*>(&clientaddr), clientlen, hostname, 8192,
-                port, 8192, 0);
-    LOG_INFO << "New connection from " << hostname << " : " << port;
     // 限制服务器的最大并发连接数
     if (connfd >= MAXFDS) {
       ::close(connfd);
@@ -54,9 +51,9 @@ void TcpServer::handleNewConn() {
     setSocketNodelay(connfd);
 
     EventLoop* loop = eventLoopThreadPool_->getNextLoop();
-    LOG_INFO << "assign " << connfd << " to " << loop;
-    loop->queueInLoop(test);
-    ::close(connfd);
+    std::shared_ptr<HttpServer> req_info(new HttpServer(loop, connfd));
+    req_info->getChannel()->setHolder(req_info);
+    loop->queueInLoop(std::bind(&HttpServer::newEvent, req_info));
   }
   acceptChannel_->setEvents(EPOLLIN | EPOLLET);
 }

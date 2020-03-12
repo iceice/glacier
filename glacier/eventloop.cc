@@ -50,7 +50,6 @@ void EventLoop::loop() {
   assertInLoopThread();
   looping_ = true;
   quit_ = false;
-  LOG_INFO << "EventLoop " << this << " start looping!";
   ChannelList activeChannels;
   while (!quit_) {
     activeChannels.clear();

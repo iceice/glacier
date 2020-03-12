@@ -6,7 +6,9 @@
 #include <memory>
 
 class Channel;
+class HttpServer;
 
+typedef std::shared_ptr<HttpServer> HttpServerPtr;
 typedef std::shared_ptr<Channel> ChannelPtr;
 typedef std::vector<ChannelPtr> ChannelList;
 
@@ -32,6 +34,7 @@ class Epoll {
   int epollfd_;
   std::vector<epoll_event> events_;
   ChannelPtr fd2chan_[MAXFDS];
+  HttpServerPtr fd2http_[MAXFDS];
 };
 
 #endif  // GLACIER_EPOLL_

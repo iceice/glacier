@@ -21,6 +21,7 @@ void Epoll::epoll_add(ChannelPtr channel, int timeout) {
   channel->EqualAndUpdateLastEvents();
 
   fd2chan_[fd] = channel;
+  fd2http_[fd] = channel->getHolder();
   if (epoll_ctl(epollfd_, EPOLL_CTL_ADD, fd, &event) < 0) {
     LOG_ERROR << "epoll add error";
     fd2chan_[fd].reset();
@@ -65,7 +66,6 @@ ChannelList Epoll::poll() {
 
 ChannelList Epoll::getActiveChannels(int eventNum) {
   ChannelList res;
-  LOG_INFO << "active event : " << eventNum;
   for (int i = 0; i < eventNum; ++i) {
     // 遍历获取有事件产生的文件描述符
     int fd = events_[i].data.fd;

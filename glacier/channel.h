@@ -4,8 +4,10 @@
 #include <memory>
 #include "glacier/base/uncopyable.h"
 #include "glacier/eventloop.h"
+#include "glacier/httpserver.h"
 
 class EventLoop;
+class HttpServer;
 
 /*
  * Channel 事件分发器
@@ -16,6 +18,7 @@ class EventLoop;
  */
 class Channel : Uncopyable {
  public:
+  typedef std::shared_ptr<HttpServer> HttpServerPtr;
   typedef std::shared_ptr<Channel> ptr;
   typedef std::function<void()> EventCallback;
 
@@ -44,6 +47,12 @@ class Channel : Uncopyable {
     return flag;
   }
 
+  void setHolder(HttpServerPtr holder) { holder_ = holder; }
+  HttpServerPtr getHolder() {
+    HttpServerPtr ret(holder_.lock());
+    return ret;
+  }
+
  private:
   EventLoop *loop_;      // channel所属的loop
   int fd_;               // channel负责的文件描述符
@@ -55,6 +64,8 @@ class Channel : Uncopyable {
   EventCallback writeCallback_;  // 写事件回调
   EventCallback errorCallback_;  // 错误事件回调
   EventCallback connCallback_;   // 连接事件回调
+
+  std::weak_ptr<HttpServer> holder_;
 };
 
 #endif  // GLACIER_CHANNEL_
