@@ -14,6 +14,10 @@ Epoll::Epoll() : epollfd_(epoll_create1(EPOLL_CLOEXEC)), events_(EVENTSNUM) {
 
 void Epoll::epoll_add(ChannelPtr channel, int timeout) {
   int fd = channel->getFd();
+  if (timeout > 0) {
+    add_timer(channel, timeout);
+    fd2http_[fd] = channel->getHolder();
+  }
   struct epoll_event event;
   event.data.fd = fd;
   event.events = channel->getEvents();
@@ -21,7 +25,6 @@ void Epoll::epoll_add(ChannelPtr channel, int timeout) {
   channel->EqualAndUpdateLastEvents();
 
   fd2chan_[fd] = channel;
-  fd2http_[fd] = channel->getHolder();
   if (epoll_ctl(epollfd_, EPOLL_CTL_ADD, fd, &event) < 0) {
     LOG_ERROR << "epoll add error";
     fd2chan_[fd].reset();
@@ -29,6 +32,7 @@ void Epoll::epoll_add(ChannelPtr channel, int timeout) {
 }
 
 void Epoll::epoll_mod(ChannelPtr channel, int timeout) {
+  if (timeout > 0) add_timer(channel, timeout);
   int fd = channel->getFd();
   if (channel->EqualAndUpdateLastEvents() == false) {
     struct epoll_event event;
@@ -50,6 +54,7 @@ void Epoll::epoll_del(ChannelPtr channel) {
     LOG_ERROR << "epoll del error";
   }
   fd2chan_[fd].reset();
+  fd2http_[fd].reset();
 }
 
 ChannelList Epoll::poll() {
@@ -78,3 +83,14 @@ ChannelList Epoll::getActiveChannels(int eventNum) {
   }
   return res;
 }
+
+void Epoll::add_timer(ChannelPtr channel, int timeout) {
+  HttpDataPtr tmp = channel->getHolder();
+  if (tmp) {
+    timerManager_.addTimer(tmp, timeout);
+  } else {
+    LOG_ERROR << "epoll add timer error";
+  }
+}
+
+void Epoll::handleExpired() { timerManager_.handleExpiredEvent(); }

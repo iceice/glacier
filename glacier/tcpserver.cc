@@ -35,7 +35,7 @@ void TcpServer::handleNewConn() {
   while ((connfd = accept(listenfd_, reinterpret_cast<SA*>(&client_addr),
                           &client_addr_len)) > 0) {
     LOG_INFO << "New connection from " << inet_ntoa(client_addr.sin_addr) << ":"
-             << ntohs(client_addr.sin_port);
+             << ntohs(client_addr.sin_port) << " asign to " << connfd;
 
     // 限制服务器的最大并发连接数
     if (connfd >= MAXFDS) {
@@ -51,9 +51,9 @@ void TcpServer::handleNewConn() {
     setSocketNodelay(connfd);
 
     EventLoop* loop = eventLoopThreadPool_->getNextLoop();
-    std::shared_ptr<HttpServer> req_info(new HttpServer(loop, connfd));
+    std::shared_ptr<HttpData> req_info(new HttpData(loop, connfd));
     req_info->getChannel()->setHolder(req_info);
-    loop->queueInLoop(std::bind(&HttpServer::newEvent, req_info));
+    loop->queueInLoop(std::bind(&HttpData::newEvent, req_info));
   }
   acceptChannel_->setEvents(EPOLLIN | EPOLLET);
 }

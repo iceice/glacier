@@ -24,28 +24,20 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <cstdlib>
+#include <string>
 
 /* Simplifies calls to bind(), connect(), and accept() */
 typedef struct sockaddr SA;
-
-/* Persistent state for the robust I/O (Rio) package */
-#define RIO_BUFSIZE 8192
-typedef struct {
-  int rio_fd;                /* Descriptor for this internal buf */
-  int rio_cnt;               /* Unread bytes in internal buf */
-  char *rio_bufptr;          /* Next unread byte in internal buf */
-  char rio_buf[RIO_BUFSIZE]; /* Internal buffer */
-} rio_t;
-
-/* Misc constants */
-#define MAXLINE 8192 /* Max text line length */
-#define MAXBUF 8192  /* Max I/O buffer size */
-#define LISTENQ 1024 /* Second argument to listen() */
 
 /* Reentrant protocol-independent client/server helpers */
 int open_clientfd(char *hostname, char *port);
 int open_listenfd(const char *port);
 int setSocketNonBlocking(int fd);
 void setSocketNodelay(int fd);
+
+ssize_t readn(int fd, std::string &buf, bool &zero);
+ssize_t writen(int fd, std::string &buf);
+ssize_t writen(int fd, void *buf, size_t n);
 
 #endif  // GLACIER_UTILS_

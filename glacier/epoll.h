@@ -4,11 +4,12 @@
 #include <sys/epoll.h>
 #include <vector>
 #include <memory>
+#include "glacier/timer.h"
 
 class Channel;
-class HttpServer;
+class HttpData;
 
-typedef std::shared_ptr<HttpServer> HttpServerPtr;
+typedef std::shared_ptr<HttpData> HttpDataPtr;
 typedef std::shared_ptr<Channel> ChannelPtr;
 typedef std::vector<ChannelPtr> ChannelList;
 
@@ -28,13 +29,17 @@ class Epoll {
 
   int getFd() { return epollfd_; }
 
+  void add_timer(ChannelPtr channel, int timeout);
+  void handleExpired();
+
  private:
   static const int MAXFDS = 100000;
 
   int epollfd_;
   std::vector<epoll_event> events_;
   ChannelPtr fd2chan_[MAXFDS];
-  HttpServerPtr fd2http_[MAXFDS];
+  HttpDataPtr fd2http_[MAXFDS];
+  TimerManager timerManager_;
 };
 
 #endif  // GLACIER_EPOLL_

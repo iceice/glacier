@@ -13,6 +13,7 @@ const size_t k_roollsize = 1000 * 1000 * 1000;
 
 int main(int argc, const char *argv[]) {
   LOG_WARN << "======== Glacier started ========";
+  Logger::SetLogLevel(Logger::FATAL);
   const char *port = argv[1];
   EventLoop mainloop;
   TcpServer server(&mainloop, 4, port);

@@ -58,7 +58,7 @@ void EventLoop::loop() {
     for (auto &it : activeChannels) it->handleEvents();
     eventHandling_ = false;
     doPendingFunctors();
-    // TODO: timer
+    poller_->handleExpired();
   }
   looping_ = false;
 }
