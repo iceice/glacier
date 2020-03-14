@@ -14,7 +14,7 @@
 * [设计介绍](#设计介绍)
 * [Webbench压测](#Webbench压测)
 * [代码量统计](#代码量统计)
-* [日志库介绍](./base)
+* [日志库介绍](./glacier/base)
 
 ## 如何使用
 
@@ -23,11 +23,11 @@ git clone git@github.com:iceice/glacier.git
 
 cd glacier
 
-./build.sh
+./make.sh
 
-cd build/release-cpp11/bin
+cd bin
 
-./glacier [-t thread_numbers] [-p port]
+./glacier [-p port]
 ```
 
 ## 设计介绍
