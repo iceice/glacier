@@ -15,19 +15,15 @@ const int DEFAULT_EXPIRED_TIME = 2000;              // ms
 const int DEFAULT_KEEP_ALIVE_TIME = 5 * 60 * 1000;  // ms
 
 void MimeType::init() {
-  mime[".html"] = "text/html";
-  mime[".avi"] = "video/x-msvideo";
-  mime[".bmp"] = "image/bmp";
-  mime[".c"] = "text/plain";
-  mime[".doc"] = "application/msword";
-  mime[".gif"] = "image/gif";
-  mime[".gz"] = "application/x-gzip";
-  mime[".htm"] = "text/html";
+  mime[".html"] = "text/html; charset=UTF-8";
+  mime[".htm"] = "text/html; charset=UTF-8";
   mime[".ico"] = "image/x-icon";
+  mime[".jpg"] = "image/jpeg";
   mime[".jpeg"] = "image/jpeg";
   mime[".png"] = "image/png";
-  mime[".txt"] = "text/plain";
-  mime[".mp3"] = "audio/mp3";
+  mime[".css"] = "text/css";
+  mime[".js"] = "application/x-javascript";
+  mime[".woff2?v=4.7.0"] = "application/font-woff2";
   mime["default"] = "text/html";
 }
 
@@ -387,8 +383,8 @@ HeaderState HttpData::parseHeaders() {
 }
 
 AnalysisState HttpData::analysisRequest() {
-  handleError(fd_, 404, "Not Found!");
-  return ANALYSIS_ERROR;
+  // handleError(fd_, 404, "Not Found!");
+  // return ANALYSIS_ERROR;
   
   if (method_ == GET) {
     string header;

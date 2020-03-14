@@ -1,5 +1,6 @@
 #include "glacier/channel.h"
 #include <sys/epoll.h>
+#include "glacier/base/log.h"
 
 Channel::Channel(EventLoop *loop)
     : loop_(loop), fd_(0), events_(0), revents_(0), lastevents_(0) {}
@@ -16,17 +17,33 @@ void Channel::handleEvents() {
   }
   if (revents_ & EPOLLERR) {
     // 文件描述符发生错误
-    errorCallback_();
+    try {
+      errorCallback_();
+    } catch (const std::bad_function_call &e) {
+      LOG_ERROR << "errorCallback_";
+    }
     return;
   }
   if (revents_ & (EPOLLIN | EPOLLPRI | EPOLLRDHUP)) {
     // 文件描述符可读，或有紧急的数据可读，或对端断开连接
-    readCallback_();
+    try {
+      readCallback_();
+    } catch (const std::bad_function_call &e) {
+      LOG_ERROR << "errorCallback_";
+    }
   }
   if (revents_ & EPOLLOUT) {
     // 文件描述符可写
-    writeCallback_();
+    try {
+      writeCallback_();
+    } catch (const std::bad_function_call &e) {
+      LOG_ERROR << "errorCallback_";
+    }
   }
   // 更新events
-  connCallback_();
+  try {
+    connCallback_();
+  } catch (const std::bad_function_call &e) {
+    LOG_ERROR << "errorCallback_";
+  }
 }
