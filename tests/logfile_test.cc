@@ -1,5 +1,5 @@
 #include "glacier/base/logfile.h"
-#include "glacier/base/log.h"
+#include "glacier/base/logging.h"
 
 using namespace glacier;
 

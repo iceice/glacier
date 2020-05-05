@@ -1,6 +1,7 @@
-#include "glacier/base/log.h"
 #include <time.h>
+
 #include "glacier/base/logfile.h"
+#include "glacier/base/logging.h"
 #include "glacier/base/threadpool.h"
 #include "glacier/base/timestamp.h"
 

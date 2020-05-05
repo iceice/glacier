@@ -61,9 +61,7 @@ struct TimeZone::Data {
   std::string abbreviation;
 };
 
-/*
- * 用 RAII 技巧来管理时区文件
- */
+// 用 RAII 技巧来管理时区文件
 class File : Uncopyable {
  public:
   File(const char* file) : fd_(::fopen(file, "rb")) {}
@@ -82,14 +80,14 @@ class File : Uncopyable {
   }
 
   int32_t readInt32() {
-    int32_t x  = 0;
+    int32_t x = 0;
     ssize_t nr = ::fread(&x, 1, sizeof(int32_t), fd_);
     if (nr != sizeof(int32_t)) throw std::logic_error("bad int32 data");
     return be32toh(x);
   }
 
   uint8_t readUInt8() {
-    uint8_t x  = 0;
+    uint8_t x = 0;
     ssize_t nr = ::fread(&x, 1, sizeof(uint8_t), fd_);
     if (nr != sizeof(uint8_t)) throw std::logic_error("bad uint8 data");
     return x;
@@ -101,14 +99,11 @@ class File : Uncopyable {
 
 inline void fillHMS(unsigned seconds, struct tm* utc) {
   unsigned minutes = seconds / 60;
-  utc->tm_sec      = seconds % 60;
-  utc->tm_min      = minutes % 60;
-  utc->tm_hour     = minutes / 60;
+  utc->tm_sec = seconds % 60;
+  utc->tm_min = minutes % 60;
+  utc->tm_hour = minutes / 60;
 }
 
-/*
- * 打开一个时区文件
- */
 bool readTimeZoneFile(const char* zonefile, struct TimeZone::Data* data) {
   File f(zonefile);
   if (!f.valid()) return false;
@@ -121,10 +116,10 @@ bool readTimeZoneFile(const char* zonefile, struct TimeZone::Data* data) {
 
     int32_t isgmtcnt = f.readInt32();
     int32_t isstdcnt = f.readInt32();
-    int32_t leapcnt  = f.readInt32();
-    int32_t timecnt  = f.readInt32();
-    int32_t typecnt  = f.readInt32();
-    int32_t charcnt  = f.readInt32();
+    int32_t leapcnt = f.readInt32();
+    int32_t timecnt = f.readInt32();
+    int32_t typecnt = f.readInt32();
+    int32_t charcnt = f.readInt32();
 
     UNUSED(isgmtcnt);
     UNUSED(isstdcnt);
@@ -143,15 +138,15 @@ bool readTimeZoneFile(const char* zonefile, struct TimeZone::Data* data) {
     }
 
     for (int i = 0; i < typecnt; ++i) {
-      int32_t gmtoff  = f.readInt32();
-      uint8_t isdst   = f.readUInt8();
+      int32_t gmtoff = f.readInt32();
+      uint8_t isdst = f.readUInt8();
       uint8_t abbrind = f.readUInt8();
 
       data->localtimes.push_back(Localtime(gmtoff, isdst, abbrind));
     }
 
     for (int i = 0; i < timecnt; ++i) {
-      int localIdx     = localtimes[i];
+      int localIdx = localtimes[i];
       time_t localtime = trans[i] + data->localtimes[localIdx].gmtOffset;
       data->transitions.push_back(Transition(trans[i], localtime, localIdx));
     }
@@ -206,9 +201,9 @@ struct tm TimeZone::toLocalTime(time_t seconds) const {
   if (local) {
     time_t localSeconds = seconds + local->gmtOffset;
     ::gmtime_r(&localSeconds, &localTime);
-    localTime.tm_isdst  = local->isDst;
+    localTime.tm_isdst = local->isDst;
     localTime.tm_gmtoff = local->gmtOffset;
-    localTime.tm_zone   = &data.abbreviation[local->arrbIdx];
+    localTime.tm_zone = &data.abbreviation[local->arrbIdx];
   }
   return localTime;
 }
@@ -217,7 +212,7 @@ time_t TimeZone::fromLocalTime(const struct tm& localTm) const {
   assert(data_ != NULL);
   const Data& data(*data_);
 
-  struct tm tmp  = localTm;
+  struct tm tmp = localTm;
   time_t seconds = ::timegm(&tmp);  // FIXME: toUtcTime
   Transition sentry(0, seconds, 0);
   const Localtime* local = findLocaltime(data, sentry, Comp(false));
@@ -236,7 +231,7 @@ struct tm TimeZone::toUtcTime(time_t secondsSinceEpoch, bool yday) {
   memset(&utc, 0, sizeof(utc));
   utc.tm_zone = "GMT";
   int seconds = static_cast<int>(secondsSinceEpoch % kSecondsPerDay);
-  int days    = static_cast<int>(secondsSinceEpoch / kSecondsPerDay);
+  int days = static_cast<int>(secondsSinceEpoch / kSecondsPerDay);
   if (seconds < 0) {
     seconds += kSecondsPerDay;
     --days;
@@ -244,10 +239,10 @@ struct tm TimeZone::toUtcTime(time_t secondsSinceEpoch, bool yday) {
   fillHMS(seconds, &utc);
   Date date(days + Date::kJulianDayOf1970_01_01);
   Date::YearMonthDay ymd = date.yearMonthDay();
-  utc.tm_year            = ymd.year - 1900;
-  utc.tm_mon             = ymd.month - 1;
-  utc.tm_mday            = ymd.day;
-  utc.tm_wday            = date.weekDay();
+  utc.tm_year = ymd.year - 1900;
+  utc.tm_mon = ymd.month - 1;
+  utc.tm_mday = ymd.day;
+  utc.tm_wday = date.weekDay();
 
   if (yday) {
     Date startOfYear(ymd.year, 1, 1);
@@ -264,7 +259,7 @@ time_t TimeZone::fromUtcTime(const struct tm& utc) {
 time_t TimeZone::fromUtcTime(int year, int month, int day, int hour, int minute, int seconds) {
   Date date(year, month, day);
   int secondsInDay = hour * 3600 + minute * 60 + seconds;
-  time_t days      = date.julianDayNumber() - Date::kJulianDayOf1970_01_01;
+  time_t days = date.julianDayNumber() - Date::kJulianDayOf1970_01_01;
   return days * kSecondsPerDay + secondsInDay;
 }
 

@@ -2,7 +2,7 @@
 
 #include "glacier/utils.h"
 #include <netinet/tcp.h>
-#include "glacier/base/log.h"
+#include "glacier/base/logging.h"
 
 const int MAX_BUFF = 4096;
 const int LISTENQ = 1024;

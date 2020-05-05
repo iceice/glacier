@@ -11,9 +11,9 @@ namespace glacier {
 
 const int BUFFER_SIZE = 64 * 1024;
 
-/*
- * 使用AppendFile来管理文件指针
- */
+//
+// AppendFile - 管理文件指针
+//
 class AppendFile : Uncopyable {
  public:
   typedef std::shared_ptr<AppendFile> ptr;

@@ -1,6 +1,6 @@
 #include "glacier/channel.h"
 #include <sys/epoll.h>
-#include "glacier/base/log.h"
+#include "glacier/base/logging.h"
 
 Channel::Channel(EventLoop *loop)
     : loop_(loop), fd_(0), events_(0), revents_(0), lastevents_(0) {}

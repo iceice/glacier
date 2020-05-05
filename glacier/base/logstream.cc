@@ -1,16 +1,15 @@
 #include "glacier/base/logstream.h"
 
 #include <algorithm>
-#include <cstring>
 
 namespace glacier {
 
 const char digits[] = "9876543210123456789";
-const char* zero    = digits + 9;
+const char* zero = digits + 9;
 
 template <typename T>
 size_t convert(char buf[], T value) {
-  T i     = value;
+  T i = value;
   char* p = buf;
 
   do {
@@ -31,7 +30,7 @@ const char digitsHex[] = "0123456789ABCDEF";
 
 size_t convertHex(char buf[], uintptr_t value) {
   uintptr_t i = value;
-  char* p     = buf;
+  char* p = buf;
 
   do {
     int lsd = static_cast<int>(i % 16);
@@ -48,6 +47,7 @@ size_t convertHex(char buf[], uintptr_t value) {
 template <typename T>
 void LogStream::formatInteger(T v) {
   if (buffer_.avail() >= kMaxNumericSize) {
+    // buffer剩余容量大于等于kMaxNumericSize
     size_t len = convert(buffer_.current(), v);
     buffer_.add(len);
   }
@@ -101,10 +101,10 @@ LogStream& LogStream::operator<<(unsigned long long v) {
 LogStream& LogStream::operator<<(const void* p) {
   if (buffer_.avail() >= kMaxNumericSize) {
     uintptr_t v = reinterpret_cast<uintptr_t>(p);
-    char* buf   = buffer_.current();
-    buf[0]      = '0';
-    buf[1]      = 'x';
-    size_t len  = convertHex(buf + 2, v);
+    char* buf = buffer_.current();
+    buf[0] = '0';
+    buf[1] = 'x';
+    size_t len = convertHex(buf + 2, v);
     buffer_.add(2 + len);
   }
   return *this;

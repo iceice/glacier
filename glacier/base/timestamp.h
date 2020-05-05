@@ -8,6 +8,8 @@ namespace glacier {
 class Timestamp : public boost::equality_comparable<Timestamp>,
                   public boost::less_than_comparable<Timestamp> {
  public:
+  static const int kMicroSecondsPerSecond = 1000 * 1000;
+
   // Constucts an invalid Timestamp.
   Timestamp() : microSecondsSinceEpoch_(0) {}
 
@@ -15,15 +17,15 @@ class Timestamp : public boost::equality_comparable<Timestamp>,
   explicit Timestamp(int64_t microSecondsSinceEpochArg)
       : microSecondsSinceEpoch_(microSecondsSinceEpochArg) {}
 
-  static const int kMicroSecondsPerSecond = 1000 * 1000;
-
   std::string toString() const;
   std::string toFormattedString(bool showMicroseconds = true) const;
 
   bool valid() const { return microSecondsSinceEpoch_ > 0; }
 
-  // for internal usage.
-  int64_t microSecondsSinceEpoch() const { return microSecondsSinceEpoch_; }
+  int64_t microSecondsSinceEpoch() const {
+    return microSecondsSinceEpoch_;
+  }
+
   time_t secondsSinceEpoch() const {
     return static_cast<time_t>(microSecondsSinceEpoch_ / kMicroSecondsPerSecond);
   }
@@ -32,7 +34,10 @@ class Timestamp : public boost::equality_comparable<Timestamp>,
   static Timestamp now();
   static Timestamp invalid() { return Timestamp(); }
 
-  static Timestamp fromUnixTime(time_t t) { return fromUnixTime(t, 0); }
+  static Timestamp fromUnixTime(time_t t) {
+    return fromUnixTime(t, 0);
+  }
+
   static Timestamp fromUnixTime(time_t t, int microseconds) {
     return Timestamp(static_cast<int64_t>(t) * kMicroSecondsPerSecond + microseconds);
   }
@@ -57,8 +62,7 @@ inline double timeDifference(Timestamp high, Timestamp low) {
 
 // Add seconds to given timestamp.
 inline Timestamp addTime(Timestamp timestamp, double seconds) {
-  int64_t delta =
-      static_cast<int64_t>(seconds * Timestamp::kMicroSecondsPerSecond);
+  int64_t delta = static_cast<int64_t>(seconds * Timestamp::kMicroSecondsPerSecond);
   return Timestamp(timestamp.microSecondsSinceEpoch() + delta);
 }
 

@@ -12,9 +12,9 @@ struct Date::YearMonthDay getYearMonthDay(int julianDayNumber) {
   int e = c - ((1461 * d) / 4);
   int m = (5 * e + 2) / 153;
   Date::YearMonthDay ymd;
-  ymd.day   = e - ((153 * m + 2) / 5) + 1;
+  ymd.day = e - ((153 * m + 2) / 5) + 1;
   ymd.month = m + 3 - 12 * (m / 10);
-  ymd.year  = b * 100 + d - 4800 + (m / 10);
+  ymd.year = b * 100 + d - 4800 + (m / 10);
   return ymd;
 }
 
@@ -27,12 +27,10 @@ int getJulianDayNumber(int year, int month, int day) {
 
 const int Date::kJulianDayOf1970_01_01 = getJulianDayNumber(1970, 1, 1);
 
-Date::Date(int y, int m, int d)
-    : julianDayNumber_(getJulianDayNumber(y, m, d)) {}
+Date::Date(int y, int m, int d) : julianDayNumber_(getJulianDayNumber(y, m, d)) {}
 
 Date::Date(const struct tm& t)
-    : julianDayNumber_(
-          getJulianDayNumber(t.tm_year + 1970, t.tm_mon + 1, t.tm_mday)) {}
+    : julianDayNumber_(getJulianDayNumber(t.tm_year + 1970, t.tm_mon + 1, t.tm_mday)) {}
 
 std::string Date::toIsoString() const {
   char buf[32];

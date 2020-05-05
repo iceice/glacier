@@ -1,7 +1,7 @@
 #include "glacier/base/threadpool.h"
 #include "glacier/base/countdown.h"
 #include "glacier/base/current_thread.h"
-#include "glacier/base/log.h"
+#include "glacier/base/logging.h"
 
 #include <iostream>
 

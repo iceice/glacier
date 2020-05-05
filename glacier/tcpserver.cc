@@ -1,5 +1,5 @@
 #include "glacier/tcpserver.h"
-#include "glacier/base/log.h"
+#include "glacier/base/logging.h"
 #include "glacier/utils.h"
 
 const int MAXFDS = 100000;

@@ -1,9 +1,8 @@
 #ifndef GLACIER_BASE_LOGSTREAM_
 #define GLACIER_BASE_LOGSTREAM_
 
-#include <assert.h>
+#include <string.h>
 
-#include <cstring>
 #include <string>
 
 #include "glacier/base/uncopyable.h"
@@ -21,11 +20,11 @@ class FixedBuffer : Uncopyable {
 
   const char* data() const { return data_; }
 
+  char* current() { return cur_; }
+
   int length() const { return static_cast<int>(cur_ - data_); }
 
   int avail() const { return static_cast<int>(end() - cur_); }
-
-  char* current() { return cur_; }
 
   void add(size_t len) { cur_ += len; }
 
@@ -49,8 +48,8 @@ class FixedBuffer : Uncopyable {
 
   static void cookieStart() {}
   static void cookieEnd() {}
-  void (*cookie_)();
 
+  void (*cookie_)();
   char data_[SIZE];
   char* cur_;
 };
@@ -58,7 +57,6 @@ class FixedBuffer : Uncopyable {
 class LogStream : Uncopyable {
  public:
   typedef FixedBuffer<kSmallBuffer> Buffer;
-  typedef LogStream self;
 
   const Buffer& buffer() const { return buffer_; }
 
@@ -66,34 +64,32 @@ class LogStream : Uncopyable {
 
   void append(const char* data, int len) { buffer_.append(data, len); }
 
-  self& operator<<(bool);
-  self& operator<<(short);
-  self& operator<<(unsigned short);
-  self& operator<<(int);
-  self& operator<<(unsigned int);
-  self& operator<<(long);
-  self& operator<<(unsigned long);
-  self& operator<<(long long);
-  self& operator<<(unsigned long long);
-
-  self& operator<<(const void*);
-
-  self& operator<<(float);
-  self& operator<<(double);
-
-  self& operator<<(char);
-  self& operator<<(const char* str);
-  self& operator<<(const unsigned char* str);
-  self& operator<<(const std::string&);
-  self& operator<<(const Buffer&);
+  LogStream& operator<<(bool);
+  LogStream& operator<<(short);
+  LogStream& operator<<(unsigned short);
+  LogStream& operator<<(int);
+  LogStream& operator<<(unsigned int);
+  LogStream& operator<<(long);
+  LogStream& operator<<(unsigned long);
+  LogStream& operator<<(long long);
+  LogStream& operator<<(unsigned long long);
+  LogStream& operator<<(const void*);
+  LogStream& operator<<(float);
+  LogStream& operator<<(double);
+  LogStream& operator<<(long double);
+  LogStream& operator<<(char);
+  LogStream& operator<<(const char* str);
+  LogStream& operator<<(const unsigned char* str);
+  LogStream& operator<<(const std::string&);
+  LogStream& operator<<(const Buffer&);
 
  private:
+  static const int kMaxNumericSize = 32;
+  
   template <typename T>
   void formatInteger(T);
 
   Buffer buffer_;
-
-  static const int kMaxNumericSize = 32;
 };
 
 }  // namespace glacier

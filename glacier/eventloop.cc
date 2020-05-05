@@ -1,7 +1,7 @@
 #include "glacier/eventloop.h"
 #include <sys/eventfd.h>
 #include "glacier/base/current_thread.h"
-#include "glacier/base/log.h"
+#include "glacier/base/logging.h"
 #include "glacier/utils.h"
 
 #include <memory>

@@ -1,4 +1,6 @@
-#include "glacier/base/log.h"
+#include "glacier/base/logging.h"
+
+#include <assert.h>
 
 #include "glacier/base/current_thread.h"
 
@@ -11,12 +13,11 @@ __thread char t_time[64];
 __thread time_t t_lastsecond;
 
 void DefaultOutput(const char* msg, int len) { fwrite(msg, 1, len, stdout); }
-
 void DefaultFlush() { fflush(stdout); }
 
 Logger::LogLevel g_loglevel = Logger::INFO;
 Logger::OutputFunc g_output = DefaultOutput;
-Logger::FlushFunc g_flush   = DefaultFlush;
+Logger::FlushFunc g_flush = DefaultFlush;
 TimeZone g_logTimeZone;
 
 const char* LogLevelName[Logger::NUM_LOG_LEVELS] = {
@@ -28,9 +29,7 @@ const char* LogLevelName[Logger::NUM_LOG_LEVELS] = {
     "FATAL ",
 };
 
-/*
- * 辅助类，在编译器获得字符串的长度
- */
+// 辅助类，在编译期获得字符串的长度
 class T {
  public:
   T(const char* str, unsigned len) : str_(str), len_(len) {}
@@ -39,6 +38,7 @@ class T {
   const unsigned len_;
 };
 
+// 辅助类，进行格式化的输出
 class Fmt {
  public:
   template <typename T>
@@ -87,8 +87,7 @@ void Logger::Impl::finish() {
 
 void Logger::Impl::formatTime() {
   int64_t microSecondsSinceEpoch = time_.microSecondsSinceEpoch();
-
-  time_t seconds   = static_cast<time_t>(microSecondsSinceEpoch / Timestamp::kMicroSecondsPerSecond);
+  time_t seconds = static_cast<time_t>(microSecondsSinceEpoch / Timestamp::kMicroSecondsPerSecond);
   int microseconds = static_cast<int>(microSecondsSinceEpoch % Timestamp::kMicroSecondsPerSecond);
   if (seconds != t_lastsecond) {
     t_lastsecond = seconds;
@@ -96,7 +95,7 @@ void Logger::Impl::formatTime() {
     if (g_logTimeZone.valid())
       tm_time = g_logTimeZone.toLocalTime(seconds);
     else
-      ::gmtime_r(&seconds, &tm_time);
+      gmtime_r(&seconds, &tm_time);
 
     int len = snprintf(t_time, sizeof(t_time), "%4d-%02d-%02d %02d:%02d:%02d",
                        tm_time.tm_year + 1900, tm_time.tm_mon + 1, tm_time.tm_mday,

@@ -1,5 +1,7 @@
 #include "glacier/base/asynclogging.h"
 
+#include <assert.h>
+
 #include "glacier/base/logfile.h"
 #include "glacier/base/timestamp.h"
 

@@ -6,8 +6,7 @@
 
 using namespace glacier;
 
-struct tm getTm(int year, int month, int day, int hour, int minute,
-                int seconds) {
+struct tm getTm(int year, int month, int day, int hour, int minute, int seconds) {
   struct tm gmt;
   memset(&gmt, 0, sizeof(gmt));
   gmt.tm_year = year - 1900;
