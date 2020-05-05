@@ -1,4 +1,5 @@
 #include "glacier/base/asynclogging.h"
+
 #include "glacier/base/logfile.h"
 #include "glacier/base/timestamp.h"
 
@@ -6,8 +7,7 @@ using namespace glacier;
 
 typedef std::lock_guard<std::mutex> MutexLockGuard;
 
-AsyncLogging::AsyncLogging(const string& basename, off_t rollSize,
-                           int flushInterval)
+AsyncLogging::AsyncLogging(const string& basename, off_t rollSize, int flushInterval)
     : basename_(basename),
       rollSize_(rollSize),
       flushInterval_(flushInterval),
@@ -31,7 +31,7 @@ AsyncLogging::~AsyncLogging() {
 void AsyncLogging::start() {
   running_.store(true);
   thread_ = Thread(std::bind(&AsyncLogging::threadFunc, this));
-  latch_.wait(); // 确保线程启动
+  latch_.wait();  // 确保线程启动
 }
 
 void AsyncLogging::stop() {
@@ -84,8 +84,8 @@ void AsyncLogging::threadFunc() {
       }
       // cond_被唤醒，超时或者前端写满了一个buffer
       buffers_.push_back(std::move(currentBuffer_));  // 将当前buffer放入列表
-      currentBuffer_ = std::move(newBuffer1);  // 将空闲的newBuffer1移为当前缓冲
-      buffersToWrite.swap(buffers_);  // 交换数据，并置空buffers
+      currentBuffer_ = std::move(newBuffer1);         // 将空闲的newBuffer1移为当前缓冲
+      buffersToWrite.swap(buffers_);                  // 交换数据，并置空buffers
       if (!nextBuffer_) {
         // 如果下一个指针为空，那么将newBuffer2移过去
         nextBuffer_ = std::move(newBuffer2);

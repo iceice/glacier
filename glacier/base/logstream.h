@@ -1,11 +1,12 @@
 #ifndef GLACIER_BASE_LOGSTREAM_
 #define GLACIER_BASE_LOGSTREAM_
 
-#include "glacier/base/uncopyable.h"
-
 #include <assert.h>
-#include <string>
+
 #include <cstring>
+#include <string>
+
+#include "glacier/base/uncopyable.h"
 
 namespace glacier {
 
@@ -74,12 +75,12 @@ class LogStream : Uncopyable {
   self& operator<<(unsigned long);
   self& operator<<(long long);
   self& operator<<(unsigned long long);
-  
+
   self& operator<<(const void*);
-  
+
   self& operator<<(float);
   self& operator<<(double);
-  
+
   self& operator<<(char);
   self& operator<<(const char* str);
   self& operator<<(const unsigned char* str);
@@ -89,7 +90,7 @@ class LogStream : Uncopyable {
  private:
   template <typename T>
   void formatInteger(T);
-  
+
   Buffer buffer_;
 
   static const int kMaxNumericSize = 32;

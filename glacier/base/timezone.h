@@ -2,6 +2,7 @@
 #define GLACIER_BASE_TIMEZONE_
 
 #include <time.h>
+
 #include <memory>
 
 namespace glacier {
@@ -19,8 +20,7 @@ class TimeZone {
 
   static struct tm toUtcTime(time_t secondsSinceEpoch, bool yday = false);
   static time_t fromUtcTime(const struct tm&);
-  static time_t fromUtcTime(int year, int month, int day, int hour, int minute,
-                            int seconds);
+  static time_t fromUtcTime(int year, int month, int day, int hour, int minute, int seconds);
   struct Data;
 
  private:

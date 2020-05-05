@@ -1,4 +1,5 @@
 #include "glacier/base/log.h"
+
 #include "glacier/base/current_thread.h"
 
 #define UNUSED(x) (void)(x)
@@ -15,13 +16,21 @@ void DefaultFlush() { fflush(stdout); }
 
 Logger::LogLevel g_loglevel = Logger::INFO;
 Logger::OutputFunc g_output = DefaultOutput;
-Logger::FlushFunc g_flush = DefaultFlush;
+Logger::FlushFunc g_flush   = DefaultFlush;
 TimeZone g_logTimeZone;
 
 const char* LogLevelName[Logger::NUM_LOG_LEVELS] = {
-    "TRACE ", "DEBUG ", "INFO  ", "WARN  ", "ERROR ", "FATAL ",
+    "TRACE ",
+    "DEBUG ",
+    "INFO  ",
+    "WARN  ",
+    "ERROR ",
+    "FATAL ",
 };
 
+/*
+ * 辅助类，在编译器获得字符串的长度
+ */
 class T {
  public:
   T(const char* str, unsigned len) : str_(str), len_(len) {}
@@ -60,8 +69,7 @@ inline LogStream& operator<<(LogStream& s, const Logger::SourceFile& v) {
   return s;
 }
 
-Logger::Impl::Impl(LogLevel level, int old_errno, const SourceFile& file,
-                   int line)
+Logger::Impl::Impl(LogLevel level, const SourceFile& file, int line)
     : stream_(),
       level_(level),
       basename_(file),
@@ -79,10 +87,9 @@ void Logger::Impl::finish() {
 
 void Logger::Impl::formatTime() {
   int64_t microSecondsSinceEpoch = time_.microSecondsSinceEpoch();
-  time_t seconds = static_cast<time_t>(microSecondsSinceEpoch /
-                                       Timestamp::kMicroSecondsPerSecond);
-  int microseconds = static_cast<int>(microSecondsSinceEpoch %
-                                      Timestamp::kMicroSecondsPerSecond);
+
+  time_t seconds   = static_cast<time_t>(microSecondsSinceEpoch / Timestamp::kMicroSecondsPerSecond);
+  int microseconds = static_cast<int>(microSecondsSinceEpoch % Timestamp::kMicroSecondsPerSecond);
   if (seconds != t_lastsecond) {
     t_lastsecond = seconds;
     struct tm tm_time;
@@ -91,10 +98,9 @@ void Logger::Impl::formatTime() {
     else
       ::gmtime_r(&seconds, &tm_time);
 
-    int len =
-        snprintf(t_time, sizeof(t_time), "%4d-%02d-%02d %02d:%02d:%02d",
-                 tm_time.tm_year + 1900, tm_time.tm_mon + 1, tm_time.tm_mday,
-                 tm_time.tm_hour, tm_time.tm_min, tm_time.tm_sec);
+    int len = snprintf(t_time, sizeof(t_time), "%4d-%02d-%02d %02d:%02d:%02d",
+                       tm_time.tm_year + 1900, tm_time.tm_mon + 1, tm_time.tm_mday,
+                       tm_time.tm_hour, tm_time.tm_min, tm_time.tm_sec);
     assert(len == 19);
     UNUSED(len);
   }
@@ -109,19 +115,17 @@ void Logger::Impl::formatTime() {
   }
 }
 
-Logger::Logger(SourceFile file, int line) : impl_(INFO, 0, file, line) {}
+Logger::Logger(SourceFile file, int line) : impl_(INFO, file, line) {}
 
-Logger::Logger(SourceFile file, int line, LogLevel level)
-    : impl_(level, 0, file, line) {}
+Logger::Logger(SourceFile file, int line, LogLevel level) : impl_(level, file, line) {}
 
-Logger::Logger(SourceFile file, int line, LogLevel level, const char* func)
-    : impl_(level, 0, file, line) {
+Logger::Logger(SourceFile file, int line, LogLevel level, const char* func) : impl_(level, file, line) {
   impl_.stream_ << func << ' ';
 }
 
 Logger::~Logger() {
   impl_.finish();
-  const LogStream::Buffer& buf(stream().buffer());
+  const LogStream::Buffer& buf(this->stream().buffer());
   g_output(buf.data(), buf.length());
   if (impl_.level_ == FATAL) {
     g_flush();
@@ -129,7 +133,7 @@ Logger::~Logger() {
   }
 }
 
-void Logger::SetLogLevel(Logger::LogLevel level) { g_loglevel = level; }
+void Logger::setLogLevel(Logger::LogLevel level) { g_loglevel = level; }
 
 void Logger::setOutput(OutputFunc out) { g_output = out; }
 

@@ -11,18 +11,18 @@
 
 namespace glacier {
 
-//
-// 使用c++11实现一个线程池
-//
+/*
+ * 使用c++11实现一个线程池
+ */
 class ThreadPool {
  public:
   typedef std::thread Thread;
   typedef std::function<void()> Task;
   typedef std::unique_lock<std::mutex> UniqueLock;
 
-  //
-  // 构造函数
-  //
+  /*
+   * 构造函数
+   */
   ThreadPool(int numThread) : stoped_(false) {
     for (int i = 0; i < numThread; ++i) {
       threads_.emplace_back([this] {
@@ -47,9 +47,9 @@ class ThreadPool {
     }
   }
 
-  //
-  // 析构函数
-  //
+  /*
+   * 析构函数
+   */
   ~ThreadPool() {
     stoped_.store(true);
     condition_.notify_all();
@@ -58,15 +58,15 @@ class ThreadPool {
     }
   }
 
-  //
-  // 提交一个模板任务
-  //
+  /*
+   * 提交一个模板任务
+   */
   template <class F, class... Args>
   auto commit(F&& f, Args&&... args) -> std::future<decltype(f(args...))> {
     if (stoped_.load()) throw std::runtime_error("commit on stoped threadpool");
 
     using return_type = decltype(f(args...));
-    auto task = std::make_shared<std::packaged_task<return_type()> >(
+    auto task         = std::make_shared<std::packaged_task<return_type()> >(
         std::bind(std::forward<F>(f), std::forward<Args>(args)...));
     std::future<return_type> res = task->get_future();
     // 添加任务到队列

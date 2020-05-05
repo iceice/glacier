@@ -4,15 +4,16 @@
 #include <memory>
 #include <mutex>
 #include <string>
+
 #include "glacier/base/uncopyable.h"
 
 namespace glacier {
 
 const int BUFFER_SIZE = 64 * 1024;
 
-//
-// 使用AppendFile来管理文件指针
-//
+/*
+ * 使用AppendFile来管理文件指针
+ */
 class AppendFile : Uncopyable {
  public:
   typedef std::shared_ptr<AppendFile> ptr;
@@ -40,8 +41,7 @@ class LogFile : Uncopyable {
   typedef std::shared_ptr<LogFile> ptr;
 
   LogFile(const std::string& name, size_t rollSize);
-  LogFile(const std::string& name, size_t rollSize, int flushInterval,
-          int checkEveryN);
+  LogFile(const std::string& name, size_t rollSize, int flushInterval, int checkEveryN);
 
   ~LogFile();
 
@@ -55,9 +55,9 @@ class LogFile : Uncopyable {
   static std::string getLogFileName(const std::string& basename, time_t* now);
 
   const std::string basename_;  // 日志文件的名字
-  const size_t rollSize_;  // 日志文件大小达到rollSize生成下一个文件
-  const int flushInterval_;  // 日志写入间隔时间
-  const int checkEveryN_;  // 每写入checkEveryN行数据，检测是否需要写入磁盘
+  const size_t rollSize_;       // 日志文件大小达到rollSize生成下一个文件
+  const int flushInterval_;     // 日志写入间隔时间
+  const int checkEveryN_;       // 每写入checkEveryN行数据，检测是否需要写入磁盘
 
   int count_;  // 计数器
 

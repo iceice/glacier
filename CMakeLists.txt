@@ -37,5 +37,5 @@ message(STATUS "CMAKE_BUILD_TYPE is ${CMAKE_BUILD_TYPE}")
 message(STATUS "CXX_FLAGS= " ${CMAKE_CXX_FLAGS} " " ${CMAKE_CXX_FLAGS_${BUILD_TYPE}})
 
 add_subdirectory(glacier/base)
-# add_subdirectory(tests)
+add_subdirectory(tests)
 add_subdirectory(glacier)

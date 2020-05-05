@@ -25,8 +25,7 @@ class Timestamp : public boost::equality_comparable<Timestamp>,
   // for internal usage.
   int64_t microSecondsSinceEpoch() const { return microSecondsSinceEpoch_; }
   time_t secondsSinceEpoch() const {
-    return static_cast<time_t>(microSecondsSinceEpoch_ /
-                               kMicroSecondsPerSecond);
+    return static_cast<time_t>(microSecondsSinceEpoch_ / kMicroSecondsPerSecond);
   }
 
   // Get time of now.
@@ -35,8 +34,7 @@ class Timestamp : public boost::equality_comparable<Timestamp>,
 
   static Timestamp fromUnixTime(time_t t) { return fromUnixTime(t, 0); }
   static Timestamp fromUnixTime(time_t t, int microseconds) {
-    return Timestamp(static_cast<int64_t>(t) * kMicroSecondsPerSecond +
-                     microseconds);
+    return Timestamp(static_cast<int64_t>(t) * kMicroSecondsPerSecond + microseconds);
   }
 
  private:

@@ -1,4 +1,5 @@
 #include "glacier/base/date.h"
+
 #include <stdio.h>
 
 namespace glacier {
@@ -11,9 +12,9 @@ struct Date::YearMonthDay getYearMonthDay(int julianDayNumber) {
   int e = c - ((1461 * d) / 4);
   int m = (5 * e + 2) / 153;
   Date::YearMonthDay ymd;
-  ymd.day = e - ((153 * m + 2) / 5) + 1;
+  ymd.day   = e - ((153 * m + 2) / 5) + 1;
   ymd.month = m + 3 - 12 * (m / 10);
-  ymd.year = b * 100 + d - 4800 + (m / 10);
+  ymd.year  = b * 100 + d - 4800 + (m / 10);
   return ymd;
 }
 

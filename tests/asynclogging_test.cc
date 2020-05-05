@@ -1,11 +1,12 @@
 #include "glacier/base/asynclogging.h"
-#include "glacier/base/log.h"
-#include "glacier/base/timestamp.h"
-#include "glacier/base/threadpool.h"
 
 #include <stdio.h>
 #include <sys/resource.h>
 #include <unistd.h>
+
+#include "glacier/base/log.h"
+#include "glacier/base/threadpool.h"
+#include "glacier/base/timestamp.h"
 
 using namespace glacier;
 
@@ -16,9 +17,9 @@ AsyncLogging* g_asyncLog;
 void asyncOutput(const char* msg, int len) { g_asyncLog->append(msg, len); }
 
 void bench(bool longLog) {
-  int cnt = 0;
+  int cnt          = 0;
   const int kBatch = 1000;
-  string empty = " ";
+  string empty     = " ";
   string longStr(3000, 'x');
   longStr += " ";
 
@@ -41,7 +42,7 @@ int main(int argc, char const* argv[]) {
   {
     // set max virtual memory to 2GB.
     size_t kOneGB = 1000 * 1024 * 1024;
-    rlimit rl = {2 * kOneGB, 2 * kOneGB};
+    rlimit rl     = {2 * kOneGB, 2 * kOneGB};
     setrlimit(RLIMIT_AS, &rl);
   }
 
