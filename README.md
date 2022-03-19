@@ -182,11 +182,11 @@ ActiveTimerSet activeTimers_; // 有效的Timer队列
 
 ## Webbench压测
 
-![web-bench](web-bench.png)
+![web-bench](screenshots/web-bench.png)
 
 QPS = 2652077 pages/min = 44201 pages/sec
 
 ## 代码量统计
 
-![code-line](code-line.png)
+![code-line](screenshots/code-line.png)
 
